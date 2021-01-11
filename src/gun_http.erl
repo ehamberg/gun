@@ -35,7 +35,7 @@
 -export([down/1]).
 -export([ws_upgrade/11]).
 
-%% Functions shared with gun_http2.
+%% Functions shared with gun_http2 and gun_pool.
 -export([host_header/3]).
 
 -type io() :: head | {body, non_neg_integer()} | body_close | body_chunked | body_trailer.

@@ -321,7 +321,7 @@ do_open(Host, Port, Opts0) ->
 	case check_options(maps:to_list(Opts)) of
 		ok ->
 			Result = case maps:get(supervise, Opts, true) of
-				true -> supervisor:start_child(gun_sup, [self(), Host, Port, Opts]);
+				true -> supervisor:start_child(gun_conns_sup, [self(), Host, Port, Opts]);
 				false -> start_link(self(), Host, Port, Opts)
 			end,
 			case Result of
@@ -508,7 +508,7 @@ intermediaries_info([Intermediary=#{transport := Transport0}|Tail], Acc) ->
 
 -spec close(pid()) -> ok.
 close(ServerPid) ->
-	supervisor:terminate_child(gun_sup, ServerPid).
+	supervisor:terminate_child(gun_conns_sup, ServerPid).
 
 -spec shutdown(pid()) -> ok.
 shutdown(ServerPid) ->
@@ -831,6 +831,8 @@ await_up(ServerPid, Timeout, MRef) ->
 	after Timeout ->
 		{error, timeout}
 	end.
+
+%% Flushing gun messages.
 
 -spec flush(pid() | stream_ref()) -> ok.
 flush(ServerPid) when is_pid(ServerPid) ->
